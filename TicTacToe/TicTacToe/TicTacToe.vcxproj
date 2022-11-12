@@ -140,6 +140,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="TicTacToe.cpp" />
+    <ClCompile Include="TTTEngine.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TTTEngine.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

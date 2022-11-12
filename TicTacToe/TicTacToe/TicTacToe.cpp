@@ -1,11 +1,14 @@
 ﻿// TicTacToe.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
 //
 
-#include <iostream>
+#include "TTTEngine.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	TTTEngine game;
+
+	game.run();
+
 }
 
 // Uruchomienie programu: Ctrl + F5 lub menu Debugowanie > Uruchom bez debugowania
