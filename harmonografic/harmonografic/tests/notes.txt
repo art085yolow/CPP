@@ -1,0 +1,36 @@
+test types:
+
+- empty vector of strings (tree data structure)
+- adding node
+- adding children
+- moving nodes
+- calling by title
+
+
+TODO:
+- vector of nodes // use map : std::map<std::string, Memo>
+- tree type vector/class
+- edit function
+- tags search engine - ish
+- render/console moving through tree and branches
+
+
+
+done:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------
+2*9int x 15 x 12 x 9 -ttt NN
