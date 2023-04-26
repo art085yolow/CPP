@@ -4,12 +4,15 @@ test types:
 - adding node
 - adding children
 - moving nodes
+- delete nodes
+- delete tree
 - calling by title
 
 
 TODO:
-- vector of nodes // use map : std::map<std::string, Memo>
-- tree type vector/class
+- editing node : title, description, tags		<-
+- update edited node title to m_all_Nodes;		<-
+- UI interface 
 - edit function
 - tags search engine - ish
 - render/console moving through tree and branches
@@ -17,6 +20,9 @@ TODO:
 
 
 done:
+- tree type vector/class
+- vector of nodes // use map : std::map<std::string, Memo*>
+- delete function to class Tree and Node <-!!
 
 
 

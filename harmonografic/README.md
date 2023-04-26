@@ -1,5 +1,7 @@
 # Harmonografic
 Notes organizer, flashcards
 
-Project goals:
-	Tree Data 
+
+# Project goals:
+
+ Tree Data 
