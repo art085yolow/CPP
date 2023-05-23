@@ -27,17 +27,22 @@ tester::tester()
 
 		std::cout << "\n Tree Record with new brach 'test2' title" << " | \n\n";
 		std::cout << "\n test2 -> new branch : \n" ;
-		tr.addNode(test2);
+		tr.add_Node(test2);
+		std::cout << " \n";
 
 		tr.traverse();
+		
+		std::cout << " \n";
+
 		pass_test(tr.get_size() == 1);
 		std::cout << " \n---\n\n";
 
 	}
 
+	std::string test_text{ "Child id: " };
+
 	// test 3
 	{
-		std::string test_text{ "Child id: " };
 		unsigned int size_test = 10;
 
 		Tree tr;
@@ -48,13 +53,17 @@ tester::tester()
 		
 		for (size_t idx = 0; idx < size_test; idx++)
 		{
-			tr.addNode(test_text + std::to_string(idx));
+			tr.add_Node(test_text + std::to_string(idx));
 			std::cout << " " << idx;
 		}
 
 		std::cout << "\n branches equel to size_test (" << size_test << ") : ";
 		std::cout << "\n nodes: \n";
+		std::cout << " \n";
+
 		tr.traverse();
+
+		std::cout << " \n";
 
 		pass_test(tr.get_size() == size_test);
 		std::cout << " \n---\n\n";
@@ -63,7 +72,6 @@ tester::tester()
 
 	// test 4
 	{
-		std::string test_text{ "Child id: " };
 		unsigned int size_test = 10;
 
 		Tree tr;
@@ -72,17 +80,21 @@ tester::tester()
 
 		for (size_t idx = 0; idx < size_test; idx++)
 		{
-			tr.addNode(test_text + std::to_string(idx));
+			tr.add_Node(test_text + std::to_string(idx));
 		}
 
 		std::cout << "\n nodes before: \n";
+		std::cout << " \n";
+
 		tr.traverse();
 		std::cout << " \n";
 
 		std::cout<< " Moving - Child id: 9 to Child id: 0\n\n";
-		tr.moveNode("Child id: 9", "Child id: 0");
+		tr.move_Node("Child id: 9", "Child id: 0");
 
 		std::cout << "\n nodes after: \n";
+		std::cout << " \n";
+
 		tr.traverse();
 		std::cout << " \n";
 
@@ -95,7 +107,6 @@ tester::tester()
 
 	{
 		// test 5
-		std::string test_text{ "Child id: " };
 		unsigned int size_test = 10;
 
 		Tree tr;
@@ -104,29 +115,30 @@ tester::tester()
 
 		for (size_t idx = 0; idx < size_test; idx++)
 		{
-			tr.addNode(test_text + std::to_string(idx));
+			tr.add_Node(test_text + std::to_string(idx));
 
 			for (size_t idy = 0; idy < 5; idy++)
 			{
-				tr.addNode(test_text + std::to_string(idx) + std::to_string(idy), "", "", test_text + std::to_string(idx));
+				tr.add_Node(test_text + std::to_string(idx) + std::to_string(idy), "", "", test_text + std::to_string(idx));
 			}
 		}
 
-		tr.traverse();
+		std::cout << " \n";
 
+		tr.traverse();
 
 		// res = 10 parents with 5 children
 		// moving: child 42 to parent 2, child 53 to child 84, child 91 to parent 0
 
-		tr.moveNode("Child id: 42", "Child id: 2");
-		tr.moveNode("Child id: 53", "Child id: 84");
-		tr.moveNode("Child id: 91", "Child id: 0");
+		tr.move_Node("Child id: 42", "Child id: 2");
+		tr.move_Node("Child id: 53", "Child id: 84");
+		tr.move_Node("Child id: 91", "Child id: 0");
 
 		tr.traverse();
 
 		std::cout << " \n";
 
-		pass_test(tr.get_title("Child id: 42") == "Child id: 2" && tr.get_title("Child id: 53") == "Child id: 84" && tr.get_title("Child id: 91") == "Child id: 0");
+		pass_test(tr.get_parent_title("Child id: 42") == "Child id: 2" && tr.get_parent_title("Child id: 53") == "Child id: 84" && tr.get_parent_title("Child id: 91") == "Child id: 0");
 		
 		std::cout << " \n---\n\n";
 
@@ -134,9 +146,8 @@ tester::tester()
 
 
 	{
-		//test 6
+		// test 6
 
-		std::string test_text{ "Child id: " };
 		unsigned int size_test = 5;
 
 		Tree tr;
@@ -145,12 +156,12 @@ tester::tester()
 
 		for (size_t idx = 0; idx < size_test; idx++)
 		{
-			tr.addNode(test_text + std::to_string(idx));
+			tr.add_Node(test_text + std::to_string(idx));
 						
 		}
 		std::cout << " \n";
 
-		tr.addNode("Child id: 4");
+		tr.add_Node("Child id: 4");
 		
 		std::cout << " \n";
 
@@ -163,9 +174,8 @@ tester::tester()
 	/// from this moment m_root and function calling by *Node are private.
 
 	{
-		//test 7
+		// test 7
 		
-		std::string test_text{ "Child id: " };
 		unsigned int size_test = 5;
 
 		Tree tr;
@@ -174,24 +184,30 @@ tester::tester()
 
 		for (size_t idx = 0; idx < size_test; idx++)
 		{
-			tr.addNode(test_text + std::to_string(idx));
+			tr.add_Node(test_text + std::to_string(idx));
 
 		}
 		std::cout << " \n";
 
 		tr.traverse();
 
-		tr.deleteNode("Child id: 3");
+		std::cout << " \n";
+
+		tr.delete_Node("Child id: 3");
 
 		tr.traverse();
+		
+		std::cout << " \n";
 
 		pass_test(tr.get_size() == size_test - 1);
+	
+		std::cout << " \n---\n\n";
+
 	}
 
 	{
-		//test 8
+		// test 8
 
-		std::string test_text{ "Child id: " };
 		unsigned int size_test = 5;
 
 		Tree tr;
@@ -200,26 +216,98 @@ tester::tester()
 
 		for (size_t idx = 0; idx < size_test; idx++)
 		{
-			tr.addNode(test_text + std::to_string(idx));
+			tr.add_Node(test_text + std::to_string(idx));
 			if (idx == 3)
 			{
 				std::string name_text = test_text + std::to_string(idx);
 				
-				tr.addNode(name_text + std::to_string(0),"","", name_text);
-				tr.addNode(name_text + std::to_string(0) + std::to_string(0),"","", name_text + std::to_string(0));
-				tr.addNode(name_text + std::to_string(0) + std::to_string(0) + std::to_string(0),"","", name_text + std::to_string(0) + std::to_string(0));
+				tr.add_Node(name_text + std::to_string(0),"","", name_text);
+				tr.add_Node(name_text + std::to_string(0) + std::to_string(0),"","", name_text + std::to_string(0));
+				tr.add_Node(name_text + std::to_string(0) + std::to_string(0) + std::to_string(0),"","", name_text + std::to_string(0) + std::to_string(0));
 			}
 		}
 		std::cout << " \n";
 
 		tr.traverse();
 
-		tr.deleteNode("Child id: 3");
+		tr.delete_Node("Child id: 3");
+
+		std::cout << " \n";
 
 		tr.traverse();
 
+		std::cout << " \n";
+
 		pass_test(tr.get_size() == size_test - 1);
+	
+		std::cout << " \n---\n\n";
+
 	}
+
+	{
+		// test 9
+
+		unsigned int size_test = 10;
+
+		Tree tr;
+
+		std::cout << "\n Tree Record test9 | editing Node by title \n\n";
+
+		for (size_t idx = 0; idx < size_test; idx++)
+		{
+			tr.add_Node(test_text + std::to_string(idx));
+
+		}
+		std::cout << " \n";
+
+		// edit node : 2 , 5 , 7 and 8 ["Child id: 2", "Child id: 5", "Child id: 7", "Child id: 8"]
+
+		tr.traverse();
+
+		std::cout << "--- \n";
+
+		std::string new_title{ "New Title " };
+		std::string new_destript{ "New Descript " };
+		std::string new_tags{ "New, Modif, Spect " };
+
+		// for 2
+		tr.edit_Node("Child id: 2", new_title + std::to_string(2), new_destript + std::to_string(2), new_tags + std::to_string(2));
+		// for 5
+		tr.edit_Node("Child id: 5", new_title + std::to_string(5), new_destript + std::to_string(5), new_tags + std::to_string(5));
+		// for 7
+		tr.edit_Node("Child id: 7", new_title + std::to_string(7), new_destript + std::to_string(7), new_tags + std::to_string(7));
+		// for 8
+		tr.edit_Node("Child id: 8", new_title + std::to_string(8), new_destript + std::to_string(8), new_tags + std::to_string(8));
+
+		std::cout << " \n";
+
+		tr.traverse();
+
+		std::cout << " \n";
+
+		// test statment
+		pass_test(
+			tr.get_title("Child id: 2") == "" &&
+			tr.get_title("New Title 2") == "New Title 2" &&
+			tr.get_title("Child id: 5") == "" &&
+			tr.get_title("New Title 5") == "New Title 5" &&
+			tr.get_title("Child id: 7") == "" &&
+			tr.get_title("New Title 7") == "New Title 7" &&
+			tr.get_title("Child id: 8") == "" &&
+			tr.get_title("New Title 8") == "New Title 8"
+					);
+
+		std::cout << " \n---\n\n";
+
+	}
+
+	{
+		// test 10
+
+
+
+	}
+
 
 }
 

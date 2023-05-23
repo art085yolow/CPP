@@ -13,7 +13,7 @@ struct Node
 	Node(std::string _title, std::string _description = "", std::string _tags = "");
 
 	// adding node as a child
-	void addChild(Node* _child);
+	void add_Child(Node* _child);
 
 	/*		Members			*/
 	// main card title
@@ -40,22 +40,25 @@ class Tree
 public:
 
 	Tree();
-	Tree(Node* _root);
 	
 	~Tree();
 
 	void traverse(std::string _node="");
 
 	// moving Nodes to other parent
-	void moveNode(std::string _sourceNode, std::string _targetNode);
+	void move_Node(std::string _sourceNode, std::string _targetNode);
+	
 	// deleting Nodes and whole branch
-	void deleteNode(std::string _targetNode);
+	void delete_Node(std::string _targetNode);
 
 	// new Nodes
-	void addNode(std::string _title, std::string _description = "", std::string _tags = "", std::string _target_Node = "");
+	void add_Node(std::string _title, std::string _description = "", std::string _tags = "", std::string _target_Node = "");
+	// edit/modify node
+	void edit_Node(std::string _target_Node, std::string _title, std::string _description , std::string _tags = "");
 
 	// get string node parent title
-	std::string get_title(std::string _child_parent);
+	std::string get_parent_title(std::string _child_parent);
+	std::string get_title(std::string _node);
 
 	// vector size in asked node
 	size_t get_size(std::string _title= "");
@@ -68,7 +71,10 @@ private:
 	void traverse(Node* _node);
 	
 	// moving Nodes to other parent
-	void moveNode(Node* _sourceNode, Node* _targetNode);
+	void move_Node(Node* _sourceNode, Node* _targetNode);
+	
+	// return value how far node is from root
+	unsigned int count_deep_Node(Node* _sourceNode);
 
 	
 	// all nodes for quick reseach
