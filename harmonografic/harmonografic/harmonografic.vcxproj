@@ -90,6 +90,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)src</AdditionalIncludeDirectories>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,12 +150,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="harmonografic.cpp" />
+    <ClCompile Include="App\main.cpp" />
+    <ClCompile Include="App\Harmonographic.cpp" />
     <ClCompile Include="src\Memo.cpp" />
     <ClCompile Include="tests\tester.cpp" />
     <ClCompile Include="src\UserInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="App\Harmonographic.h" />
     <ClInclude Include="src\Memo.h" />
     <ClInclude Include="tests\tester.h" />
     <ClInclude Include="src\UserInterface.h" />

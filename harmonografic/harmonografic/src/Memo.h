@@ -39,7 +39,7 @@ class Tree
 {
 public:
 
-	Tree();
+	Tree(std::string _projectName = "Project Name", std::string _description = "", std::string _tags = "");
 	
 	~Tree();
 

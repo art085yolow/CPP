@@ -14,7 +14,11 @@ test types:
 TODO:
 - load/save file - how, where, what
 - UI interface 
+- window frame/buffer managment
 - edit function
+- milestones managment
+- use CHAR_INFO as a buffer (remeber to make pointer call function to buffer)
+- timestep nodes/actions
 - tags search engine - ish
 - render/console moving through tree and branches
 
@@ -42,4 +46,6 @@ done:
 
 
 ----------------------------
-2*9int x 15 x 12 x 9 -ttt NN
+-key-controls in win32Api are already prepared.
+	If I need additional key-option-function I need use VK_KEYDOWN(UP) in CALLBACK proccession to set action-event messages.
+-

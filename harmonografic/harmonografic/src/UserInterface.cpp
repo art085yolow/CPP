@@ -1,157 +1,228 @@
 #include "UserInterface.h"
 
+
+// callback-> very, very, very important
+LRESULT CALLBACK WndProc(HWND _hwnd, UINT _msg, WPARAM _wparam, LPARAM _lparam)
+{
+	UserInterface dir;
+	static int x, y;
+
+	// here procces all msg
+
+	switch (_msg)
+	{
+	case WM_KEYDOWN:
+	{
+		Beep(0, 0);
+		switch(_wparam)
+		{
+			case VK_RETURN:
+				{
+					MessageBox(_hwnd, L"WTF!!!"/*message in the window*/, L"DZIALA!!!!!!!!!!!!!!!!!!!!!!!"/*title of the window*/, MB_ICONINFORMATION);
+				}
+			break;
+			case 0x51:
+				/// keys from a-z from VK(virtual keys) must be use in hex numbers.
+				{
+					LONG_PTR currentStyle = GetWindowLongPtr(_hwnd, GWL_STYLE);
+
+					static bool alternateAppearance = false;
+
+					if (alternateAppearance)
+					{
+						SetWindowLongPtr(_hwnd, GWL_STYLE, currentStyle | WS_OVERLAPPEDWINDOW);
+					}
+					else {
+
+						SetWindowLongPtr(_hwnd, GWL_STYLE, currentStyle & ~WS_OVERLAPPEDWINDOW);
+					}
+
+					SetWindowPos(_hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+
+					alternateAppearance = !alternateAppearance;
+				}
+			break;
+			case VK_ESCAPE:
+				{
+					if (MessageBox(_hwnd, L"Really quit?", L"Exit app", MB_OKCANCEL) == IDOK)
+					{
+
+						DestroyWindow(_hwnd);
+					}
+				}
+			break;
+			case VK_DELETE:
+				{	
+
+				CreateWindowW(L"BUTTON", L"New canvase", WS_VISIBLE | WS_CHILD, x, y, 150, 20, _hwnd, (HMENU)1 , NULL, NULL);
+					x += 10;
+					y += 10;
+				}
+			break;
+		
+		}
+	}
+	break;
+	case WM_COMMAND:
+	{
+		if (LOWORD(_wparam) == 1)
+		{
+			HWND but = (HWND)_lparam;
+			dir.chitchat();
+			//HWND but = GetDlgItem(_hwnd, 1);
+			MessageBox(_hwnd, L"click click men", L"click event", MB_OK);
+			DestroyWindow(but);
+			x -= 10;
+			y -= 10;
+		}
+	}
+	break;
+	case WM_PAINT:
+	{
+		PAINTSTRUCT ps;
+		HDC hdc = BeginPaint(_hwnd, &ps);
+
+		// All painting occurs here, between BeginPaint and EndPaint.
+
+		FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
+
+		EndPaint(_hwnd, &ps);
+	}
+	break;
+	case WM_CREATE:
+	{
+		// on create windows call
+		UserInterface* windowUI = (UserInterface*)((LPCREATESTRUCT)_lparam)->lpCreateParams;
+
+		SetWindowLongPtr(_hwnd, GWLP_USERDATA, (LONG_PTR)windowUI);
+
+		windowUI->onCreate();
+	}
+	break;
+	//case WM_CLOSE:
+	//{
+	//	DestroyWindow(_hwnd);
+	//	break;
+	//}
+	case WM_DESTROY:
+	{
+		// on destroy window call
+		UserInterface* windowUI = (UserInterface*)GetWindowLongPtr(_hwnd, GWLP_USERDATA);
+		windowUI->onDestroy();
+		::PostQuitMessage(0);
+	}
+	break;
+	default:
+		return ::DefWindowProc(_hwnd, _msg, _wparam, _lparam);
+		break;
+	}
+	
+
+	return NULL;
+}
+
 UserInterface::UserInterface()
 {
-    this->m_console = GetConsoleWindow();
-
-    GetWindowRect(this->m_console, &this->m_r);
-
-    MoveWindow(this->m_console, 50, 50, this->m_width_window, this->m_height_window, TRUE);
-
-    this->m_lines.resize( Titles_Names::f_max_line + 1 );
-
-    // width of line is 90, REMEMBER system count from 0!!! 0->89 = 90
-    //int width_char = 89;
-    char c = 205; // frame characters
-    std::vector<std::string> s_frame (2);
-    s_frame[0].resize(Titles_Names::f_width_char+1, ' ');
-    s_frame[1].resize(Titles_Names::f_width_char+1, c);
-    
-    c = 186;
-    
-    for (auto& s : s_frame)
-    {
-       // s.replace(0, 1, "|");
-       // s.replace(Titles_Names::f_width_char, 1, "|");
-
-        
-        s[0] = c;
-        s[Titles_Names::f_width_char] = c;
-        
-    }
-
-    for (size_t i = 0; i < this->m_lines.size(); i++)
-    {
-
-        switch (i) // line numbers // del after
-        {
-        case Titles_Names::f_path_tree:
-            c = 201;
-            s_frame[1][0] = c;
-            c = 187;
-            s_frame[1][Titles_Names::f_width_char] = c;
-            this->m_lines[i] = s_frame[1];
-            break;
-        case Titles_Names::f_title:
-        case Titles_Names::f_tag:
-        case Titles_Names::f_description:
-            c = 204;
-            s_frame[1][0] = c;
-            c = 185;
-            s_frame[1][Titles_Names::f_width_char] = c;
-            this->m_lines[i] = s_frame[1];
-            break;
-        case Titles_Names::f_max_line:
-            c = 200;
-            s_frame[1][0] = c;
-            c = 188;
-            s_frame[1][Titles_Names::f_width_char] = c;
-            this->m_lines[i] = s_frame[1];
-            break;
-
-        default:
-            this->m_lines[i] = s_frame[0];
-            break;
-        };
-
-    }
-
-    // for interating enum
-    std::initializer_list<Titles_Names> Titles_Names_list = { f_path_tree, f_title, f_tag , f_description };
-
-
-    for (auto e : Titles_Names_list)
-    {
-
-        std::string sub_title{ "" };
-
-        switch (e) // titles
-        {
-        case Titles_Names::f_path_tree:
-            sub_title = " Path Tree ";
-            break;
-        case Titles_Names::f_title:
-            sub_title = " Title ";
-            break;
-        case Titles_Names::f_tag:
-            sub_title = " TAGS ";
-            break;
-        case Titles_Names::f_description:
-            sub_title = " Description ";
-            break;
-        }
-
-        this->m_lines[e].replace(Titles_Names::f_width_char / 2 - sub_title.length() / 2, sub_title.length(), sub_title);
-        
-    }
-
-    for (auto e : Titles_Names_list) 
-    {
-        switch (e)
-        {
-        case f_path_tree:
-            c = 30;
-            this->m_lines[e+1][Titles_Names::f_sign_char_updown_position] = c;
-            c = 31;
-            this->m_lines[Titles_Names::f_title-1][Titles_Names::f_sign_char_updown_position] = c;
-            break;
-        case f_title:
-            c = 30;
-            this->m_lines[e + 1][Titles_Names::f_sign_char_updown_position] = c;
-            c = 31;
-            this->m_lines[Titles_Names::f_tag - 1][Titles_Names::f_sign_char_updown_position] = c;
-            break;
-        case f_tag:
-            c = 30;
-            this->m_lines[e + 1][Titles_Names::f_sign_char_updown_position] = c;
-            c = 31;
-            this->m_lines[Titles_Names::f_description - 1][Titles_Names::f_sign_char_updown_position] = c;
-            break;
-        case f_description:
-            c = 30;
-            this->m_lines[e + 1][Titles_Names::f_sign_char_updown_position] = c;
-            c = 31;
-            this->m_lines[Titles_Names::f_max_line - 1][Titles_Names::f_sign_char_updown_position] = c;
-            break;
-        }
-    }
-    
-   // for (size_t i = 0; i < this->m_lines.size(); i++)
-   // {
-   //
-   //     switch (i) // line numbers // del after
-   //     {
-   //     case Titles_Names::f_path_tree:
-   //     case Titles_Names::f_title:
-   //     case Titles_Names::f_tag:
-   //     case Titles_Names::f_description:
-   //     case Titles_Names::f_max_line:
-   //         break;
-   //
-   //     default:
-   //         this->m_lines[i].replace(Titles_Names::f_width_char - std::to_string(i).length()- 1 , std::to_string(i).length(), std::to_string(i));
-   //         break;
-   //     };
-   // }
+   
 }
 
-void UserInterface::print()
+UserInterface::~UserInterface()
 {
-    // system("cls");
-
-    for (auto l : this->m_lines)
-    {
-        std::cout << l;
-    }
-    std::cout << "\n Write command:\n";
 }
+
+bool UserInterface::init()
+{
+	// window class container
+	WNDCLASSEX wc;
+
+	wc.cbClsExtra = NULL;
+	wc.cbSize = sizeof(WNDCLASSEX);
+	wc.cbWndExtra = NULL;
+	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+	wc.hInstance = NULL;
+	wc.lpszClassName = L"MyWindowClass";
+	wc.lpszMenuName = L"";
+	wc.style = NULL;
+	wc.lpfnWndProc = &WndProc;
+
+
+	if (!::RegisterClassEx(&wc)) return false; // fail to register, return false
+
+	
+	m_hwnd = ::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"MyWindowClass", L"Harmonographic", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, NULL, NULL, NULL, this);
+
+	// failer creation
+	if (!m_hwnd) return false;
+
+	// draw/show window
+	::ShowWindow(m_hwnd, SW_SHOW);
+	::UpdateWindow(m_hwnd);
+
+	
+	
+	m_is_run = true;
+
+	return true;
+}
+
+bool UserInterface::broadcast()
+{
+	MSG msg;
+
+	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0)
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	this->onUpdate();
+
+	//temp cpu stress release
+	Sleep(10);
+
+	return true;
+}
+
+
+bool UserInterface::isRun()
+{
+	return m_is_run;
+}
+
+bool UserInterface::release()
+{
+	// Destroy window
+	if (!::DestroyWindow(m_hwnd)) return false;
+
+	return true;
+}
+
+bool UserInterface::chitchat()
+{
+	std::cout << "button click click\n";
+	return true;
+}
+
+HWND UserInterface::makeButton(HWND& _hwnd, LPARAM& _lparam)
+{
+	static int x, y;
+	return CreateWindowW(L"Button", L"New canvase", WS_VISIBLE | WS_CHILD, x, y, 150, 20, _hwnd, NULL, ((LPCREATESTRUCT)_lparam)->hInstance , NULL);
+	//return CreateWindowW(L"Button", L"New canvase", WS_VISIBLE | WS_CHILD, x, y, 150, 20, _hwnd, NULL, ((LPCREATESTRUCT)_lparam)->hInstance ,(LPVOID) chitchat());
+}
+
+void UserInterface::onCreate()
+{
+}
+
+void UserInterface::onUpdate()
+{
+}
+
+void UserInterface::onDestroy()
+{
+	m_is_run = false;
+}
+

@@ -16,9 +16,9 @@ void Node::add_Child(Node* _child)
 
 
 
-Tree::Tree()
+Tree::Tree(std::string _projectName, std::string _description, std::string _tags)
 {
-	m_root = new Node("Main Root");
+	m_root = new Node(_projectName, _description, _tags);
 	m_all_Nodes[m_root->m_title] = m_root;
 }
 
