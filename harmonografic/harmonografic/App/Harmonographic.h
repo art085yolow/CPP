@@ -1,6 +1,8 @@
 ﻿#pragma once
 
-#include "UserInterface.h"
+#include "./WindowInterface/UserInterface.h"
+#include "./WindowHandler.h"
+
 
 class Harmonographic: public UserInterface
 {
@@ -16,8 +18,12 @@ public:
 
 	virtual void onDestroy() override;
 
-private:
+	
+	// clean up after
 
+
+private:
+	WindowHandler m_main_window;
 
 
 

@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include <Windows.h>
 
-#include "Memo.h"
+#include "./TreeNode/Memo.h"
 #include "../tests/tester.h"
 #include "Harmonographic.h"
 
@@ -18,7 +18,7 @@ int main()
     {
         while (app.isRun())
         {
-            app.broadcast();
+            app.RunMessageLoop();
         }
     }
     
@@ -26,8 +26,8 @@ int main()
     std::cout << "App terminate. \n";
 
 
-    std::string s;
-    std::getline(std::cin,s);
+    // std::string s;
+    // std::getline(std::cin,s);
 
     std::cout << "\n\n";
       

@@ -152,15 +152,17 @@
   <ItemGroup>
     <ClCompile Include="App\main.cpp" />
     <ClCompile Include="App\Harmonographic.cpp" />
-    <ClCompile Include="src\Memo.cpp" />
+    <ClCompile Include="src\TreeNode\Memo.cpp" />
     <ClCompile Include="tests\tester.cpp" />
-    <ClCompile Include="src\UserInterface.cpp" />
+    <ClCompile Include="src\WindowInterface\UserInterface.cpp" />
+    <ClCompile Include="src\WindowHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\Harmonographic.h" />
-    <ClInclude Include="src\Memo.h" />
+    <ClInclude Include="src\TreeNode\Memo.h" />
     <ClInclude Include="tests\tester.h" />
-    <ClInclude Include="src\UserInterface.h" />
+    <ClInclude Include="src\WindowInterface\UserInterface.h" />
+    <ClInclude Include="src\WindowHandler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
