@@ -6,11 +6,11 @@ type: consola, C++
 
 Basic game to play. Main goal is to make small ANN play the game.
 
-###User input
+### User input
 Arrows LEFT/RIGHT/DOWN, Z and X rotation, R to reset, Q to quit.
 
 
-#####Version:
+##### Version:
 	0.0.1 basic core. 
 
 TODO:
