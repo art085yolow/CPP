@@ -110,7 +110,7 @@ void TTTEngine::render()
 	// checking if and which player met win condition
 
 	if (this->check_condition()) {
-		std::cout << "Player won " << (this->game_system[TTT_SYSTEM_WIN_PLAYER] ? 'O' : 'X') << "\n\n Press R to restart game or ESC to exit.\n\n";
+		std::cout << "Player '" << (this->game_system[TTT_SYSTEM_WIN_PLAYER] ? 'O' : 'X') << "' won!" << "\n\n Press R to restart game or ESC to exit.\n\n";
 	}
 	else if (this->pool.to_ulong() == 511) // if non met condiotion but all blocks are full
 	{

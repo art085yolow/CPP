@@ -1,7 +1,11 @@
 # Harmonografic
 Notes organizer, flashcards
 
+##### TODO
+- make data tree.
+- sorting tree.
+- loading, saving file.
 
-# Project goals:
+##### Project goals:
 
- Tree Data 
+ To undestand Tree-Data type architecture.
