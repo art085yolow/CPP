@@ -1,11 +1,15 @@
 #include <iostream>
 #include <random>
+#include <string>
+
+
 
 struct CPU_8
 {
 	uint16_t program_count=0x200;
 	uint16_t fetch_opcode = 0;
 	bool draw_flag = false;
+	bool b_debug = false;
 
 	// video 0xF00-0xFFF
 
@@ -50,6 +54,25 @@ struct CPU_8
         
 	}
 
+	void clearDisplay()
+	{
+	        for (size_t i = 0x0F00; i < 0x1000; i++)
+	        {
+            		this->memory[i] = 0;
+       		}
+	}
+
+
+	std::string read_opcode(uint16_t _opcode)
+	{
+		std::string ret;
+		for (int i = 3; i >= 0; i--)
+		{
+			ret+= "0123456789ABCDEF"[(_opcode >> (i*4) & 0xF)];
+		}
+		return ret;
+	}
+
 	void fetch()
 	{
 		// this->fetch_opcode = this->memory[program_count] << 8;
@@ -57,7 +80,7 @@ struct CPU_8
 
 		this->fetch_opcode = (this->memory[program_count] << 8) | this->memory[program_count + 1];
 		this->program_count+=2;
-
+		this->program_count&=0x0FFF;
 	};
 
 	void jumpTo(uint16_t _jump_to_address)
@@ -272,26 +295,37 @@ struct CPU_8
 	void draw(uint16_t _XYN)
 	{
 		// screen have (64)w * (32)h pixels
-		uint8_t x = this->reg_V[(_XYN & 0x0F00) >> 8];
-		uint8_t y = this->reg_V[(_XYN & 0x00F0) >> 4];
+		uint8_t x = this->reg_V[(_XYN >> 8) & 0x000F];
+		uint8_t y = this->reg_V[(_XYN >> 4) & 0x000F];
 		uint8_t n = _XYN & 0x000F;
+		
 
 		this->reg_V[0xF] = 0;
 		for (size_t y_line = 0; y_line < n; y_line++)
 		{
 			uint8_t pixels = this->memory[this->reg_I + y_line];
+
+//		if(this->b_debug) std::cout << "Chip8_unit::draw X: " << uint16_t(x) << " Y: " << uint16_t(y) << " N: " << uint16_t(n) << " REG_I: " << this->reg_I << " pixels at: " << uint16_t(this->reg_I + y_line) << std::endl;
+			
 			for (size_t x_line = 0; x_line < 8; x_line++)
 			{
-				if ((pixels & (0x80 >> x_line)) != 0)
+				if(x+x_line<64)
 				{
-					// colision? raise flag
-					// make correction // 64 pix dev 8 (8pix per char) eq 8
-					if ((this->memory[0x0F00 + (x+((y+y_line)*8))] & (0x80 >> x_line)) == (0x80 >> x_line))
+					if (((pixels >> (7 - x_line)) & 1) != 0)
 					{
-						this->reg_V[0xF] = 1;
-					};
+						// colision? raise flag
+						// make correction // 64 pix dev 8 (8pix per char) eq 8
+					
+						uint8_t byte_index = (((y + y_line) * 64) + (x + x_line)) / 8;
+						uint8_t bit_index = (x + x_line) % 8;	
+						
+						if (((this->memory[0x0F00 + byte_index] >> bit_index) & 0x1) == 1)
+						{
+							this->reg_V[0xF] = 1;
+						};
 
-					this->memory[0x0F00 + (x+((y+y_line)*8))] ^= (0x80 >> x_line);
+						this->memory[0x0F00 + byte_index] ^= (0x1 << bit_index);
+					};
 				};
 			};
 		};
@@ -384,10 +418,168 @@ struct CPU_8
 
 	};
 
+void decode_opcode(uint16_t f_opcode)
+{
+	std::cout << read_opcode(this->program_count - 2) << " :: ";
+	switch(f_opcode & 0xF000)
+	{
+		case 0x0000: 
+			{
+				if (f_opcode == 0x0000)
+				{
+					std::cout << read_opcode(f_opcode) << " : NOP" << std::endl;
+				}
+				break;
+				// clear display
+				if(f_opcode == 0x00E0)
+				{
+					std::cout << read_opcode(f_opcode) << " : clearDisply()" << std::endl;
+					break;
+				}
+				// return from subroutine
+				else if(f_opcode == 0x00EE)
+				{
+					std::cout << read_opcode(f_opcode) << " : returnFromSubroutine()" << std::endl;
+					break;
+				}
+				// for old machine jump
+				else 
+				{
+					std::cout << read_opcode(f_opcode) << " : OLD JUMP" << std::endl;
+					break;
+				}
+
+			}
+		break;
+		case 0x1000:
+			std::cout << read_opcode(f_opcode) << " : JUMPto " << read_opcode(f_opcode & 0x0FFF) << std::endl;
+		break;
+		case 0x2000:
+			std::cout << read_opcode(f_opcode) << " : callSubroutine " << read_opcode(f_opcode & 0x0FFF)  << std::endl;
+		break;
+		case 0x3000:
+			std::cout << read_opcode(f_opcode) << " : cond_x_eq V[" << read_opcode((f_opcode >> 8) & 0x000F) << "] to NN: " << read_opcode(f_opcode & 0x00FF) << std::endl;
+		break;
+		case 0x4000:
+			std::cout << read_opcode(f_opcode) << " : cond_x_not_eq V["  << read_opcode((f_opcode >> 8) & 0x000F) << "] to NN: " << read_opcode(f_opcode & 0x00FF) << std::endl;
+		break;
+		case 0x5000:
+			std::cout << read_opcode(f_opcode) << " : cond_x_y_eq V[" << read_opcode((f_opcode >> 8) & 0x000F) << "] V[" << read_opcode((f_opcode >> 4) & 0x000F) << "]" << std::endl;
+		break;
+		case 0x6000:
+			std::cout << read_opcode(f_opcode) << " : set_X_NN V[" << read_opcode((f_opcode >> 8) & 0x000F) << "] NN: " << read_opcode(f_opcode & 0x00FF) << std::endl;
+		break;
+		case 0x7000:
+			std::cout << read_opcode(f_opcode) << " : add_X_NN V[" << read_opcode((f_opcode >> 8) & 0x000F) << "] NN: " << read_opcode(f_opcode & 0x00FF) << std::endl;
+		break;
+		case 0x8000:
+		{
+			switch(f_opcode & 0x000F)
+			{
+				case 0x0000:
+					std::cout << read_opcode(f_opcode) << " : set_XY " << read_opcode(f_opcode & 0x0FF0) << std::endl;
+				break;
+				case 0x0001:
+					std::cout << read_opcode(f_opcode) << " : or_XY " << read_opcode(f_opcode & 0x0FF0) << std::endl;
+				break;
+				case 0x0002:
+					std::cout << read_opcode(f_opcode) << " : and_XY " << read_opcode(f_opcode & 0x0FF0) << std::endl;
+				break;
+				case 0x0003:
+					std::cout << read_opcode(f_opcode) << " : xor_XY " << read_opcode(f_opcode & 0x0FF0) << std::endl;
+				break;
+				case 0x0004:
+					std::cout << read_opcode(f_opcode) << " : add_XY " << read_opcode(f_opcode & 0x0FF0) << std::endl;
+				break;
+				case 0x0005:
+					std::cout << read_opcode(f_opcode) << " : sub_XY " << read_opcode(f_opcode & 0x0FF0) << std::endl;
+				break;
+				case 0x0006:
+					std::cout << read_opcode(f_opcode) << " : shift_right_XY " << read_opcode(f_opcode & 0x0FF0) << std::endl;
+				break;
+				case 0x0007:
+					std::cout << read_opcode(f_opcode) << " : nsub_XY " << read_opcode(f_opcode & 0x0FF0) << std::endl;
+				break;
+				case 0x000E:
+					std::cout << read_opcode(f_opcode) << " : shift_left_XY " << read_opcode(f_opcode & 0x0FF0) << std::endl;
+				break;
+			};
+		};
+		break;
+		case 0x9000:
+			std::cout << read_opcode(f_opcode) << " : cond_x_y_not_eq " << read_opcode(f_opcode & 0x0FF0) << std::endl;
+		break;
+		case 0xA000:
+			std::cout << read_opcode(f_opcode) << " : mem_set_I " << read_opcode(f_opcode & 0x0FFF) << std::endl;
+		break;
+		case 0xB000:
+			std::cout << read_opcode(f_opcode) << " : jump_to_NNNplusV " << read_opcode(f_opcode & 0x0FFF) << std::endl;
+		break;
+		case 0xC000:
+			std::cout << read_opcode(f_opcode) << " : random_bit " << read_opcode(f_opcode & 0x0FFF) << std::endl;
+		break;
+		case 0xD000:
+			std::cout << read_opcode(f_opcode) << " : draw " << read_opcode(f_opcode & 0x0FFF) << std::endl;
+		break;
+		case 0xE000:
+			{
+				switch(f_opcode & 0xFF)
+				{
+					case 0x9E:
+						std::cout << read_opcode(f_opcode) << " : key_press " << read_opcode((f_opcode & 0x0F00) >> 8) << std::endl;
+					break;
+					case 0xA1:
+						std::cout << read_opcode(f_opcode) << " : key_not_press " << read_opcode((f_opcode & 0x0F00) >> 8) << std::endl;
+					break;
+				}
+			};
+		break;
+		case 0xF000:
+		{
+			switch (f_opcode & 0xFF)
+			{
+				case 0x07:
+					std::cout << read_opcode(f_opcode) << " : get_delay_timer " << read_opcode((f_opcode & 0x0F00) >> 8) << std::endl;
+				break;
+				case 0x0A:
+	// we need loop but we can't stop emulator so... PC-=2; and we stay in "wait" loop until some key is finaly pressed.
+					std::cout << read_opcode(f_opcode) << " : get_key " << read_opcode((f_opcode & 0x0F00) >> 8) << std::endl;
+				break;
+				case 0x15:
+					std::cout << read_opcode(f_opcode) << " : set_delay_timer " << read_opcode((f_opcode & 0x0F00) >> 8) << std::endl;
+				break;
+				case 0x18:
+					std::cout << read_opcode(f_opcode) << " : set_sound_timer " << read_opcode((f_opcode & 0x0F00) >> 8) << std::endl;
+				break;
+				case 0x1E:
+					std::cout << read_opcode(f_opcode) << " : add_VXtoI " << read_opcode((f_opcode & 0x0F00) >> 8) << std::endl;
+				break;
+				case 0x29:
+					// font sprite at the begining of memory, type * 8 (exp. 2 * 8, A * 8);
+					std::cout << read_opcode(f_opcode) << " : set_ItoFontSprite " << read_opcode((f_opcode & 0x0F00) >> 8) << std::endl;
+				break;
+				case 0x33:
+					std::cout << read_opcode(f_opcode) << " : set_BCDofVX " << read_opcode((f_opcode & 0x0F00) >> 8) << std::endl;
+				break;
+				case 0x55:
+				// V0 to VX(included VX)
+					std::cout << read_opcode(f_opcode) << " : reg_dump " << read_opcode((f_opcode & 0x0F00) >> 8) << std::endl;
+				break;
+				case 0x65:
+				// V0 to VX(included VX)
+					std::cout << read_opcode(f_opcode) << " : reg_load " << read_opcode((f_opcode & 0x0F00) >> 8) << std::endl;
+				break;
+			};
+		};
+		break;
+	};
+};
 
 
 	void execute()
 	{
+		if(this->b_debug) decode_opcode(this->fetch_opcode);
+		
 		switch(this->fetch_opcode & 0xF000)
 		{
 			case 0x0000: 
@@ -396,7 +588,7 @@ struct CPU_8
 					// clear display
 					if(this->fetch_opcode == 0x00E0)
 					{
-						// clearDisply();
+						this->clearDisplay();
 						break;
 					}
 					// return from subroutine
