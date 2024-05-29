@@ -1,0 +1,31 @@
+Move entire project to Linux
+
+Ideas:
+	- one project one file
+	- one main list(map) of notes
+	- tracking deleted/unused ID's below the last ID in the list(example: list size is 50 ID's and tracked unused ID's are 40,42,49).
+	- deleted ID's at first are search through the notes list PARENT_ID and CONNECTION to remove ID and deleting at end.
+	- saving notes/Memo as text(like json). That means to create function to read and write file in that way.
+	- Running app is checking if NOTES and HISTORY folders exist. If not Create them.
+	- use Xlib(X11, learn something now) for windows screen
+	- 
+
+TODO:
+
+	- make data tree.
+	- sorting tree.
+	- loading, saving file.
+	- rebuild 'Memo' notes
+	
+	Note{
+		ID:
+		TITLE:
+		DESCRIPT:
+		TAGS:
+		PARENT_ID:
+		CONNECTION:
+		CraetedDate:
+		LastModification:
+		}
+	
+	-
