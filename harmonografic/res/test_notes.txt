@@ -1,0 +1,29 @@
+test types:
+
+- empty vector of strings (tree data structure)
+- adding node
+- adding children
+- moving nodes
+- delete nodes
+- delete tree
+- calling by title
+- editing node
+
+
+
+TODO:
+- load/save file - how, where, what
+- UI interface 
+- window frame/buffer managment
+- edit function
+- milestones managment
+- timestep nodes/actions
+- tags search engine - ish
+- render/console moving through tree and branches
+
+
+
+done:
+- 
+
+

@@ -20,8 +20,14 @@ TODO:
 	Note{
 		ID:
 		TITLE:
+		[scontainer:]
+		[/scontainer]
 		DESCRIPT:
+		[scontainer:]
+		[/scontainer]
 		TAGS:
+		[scontainer:]
+		[/scontainer]
 		PARENT_ID:
 		CONNECTION:
 		CraetedDate:
